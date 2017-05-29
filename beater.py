@@ -1,11 +1,23 @@
 #!/usr/local/Cellar/python/2.7.12/bin/python2.7
 
 import json
+import hashlib
 
+workingDirectory = "./good-game/"
 
 def enforceFileRule(fileName, fileHash):
+	fileName = workingDirectory + fileName
 	print("	File name: " + str(fileName) + " File hash: " 
 			+ str(fileHash))
+	
+	# Open file and calculate MD5 hash
+	with open(fileName) as file_to_check:
+	    md5_returned = hashlib.md5(file_to_check.read()).hexdigest()
+
+	if md5_returned == fileHash:
+		print("	Good file!")
+	else:
+		print("	Bad file!")
 
 
 def enforceProcessNameRule(procName):
