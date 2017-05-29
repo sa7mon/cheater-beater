@@ -2,8 +2,8 @@
   "rules": [
     {
       "rule-type": "file-hash",
-      "file-name": "myfile.txt",
-      "hash": "asdfasdfasdf"
+      "file-name": "maingame.exe",
+      "hash": "d41d8cd98f00b204e9800998ecf8427e"
     },
     {
     	"rule-type": "running-process",
