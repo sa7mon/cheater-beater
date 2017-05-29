@@ -1,31 +1,38 @@
 #!/usr/local/Cellar/python/2.7.12/bin/python2.7
 
+
+########################################################
+# cheater-beater - beater.py
+# 	An optimistic cheat detection script
+#
+# Author: Dan Salmon (@sa7mon)
+# Written: May 29, 2017
+# Location: HAN University, Arnhem, Netherlands
+#
+########################################################
+
+
 import json
 import hashlib
 import psutil
 import argparse
 
 
-workingDirectory = "./good-game/"
-
 def enforceFileRule(fileName, fileHash):
 	fileName = workingDirectory + fileName
-	print("	File name: " + str(fileName) + " File hash: " 
-			+ str(fileHash))
 
 	# Open file and calculate MD5 hash
 	with open(fileName) as file_to_check:
 	    md5_returned = hashlib.md5(file_to_check.read()).hexdigest()
 
 	if md5_returned == fileHash:
-		print("	Good file!")
+		return True
 	else:
-		print("	Bad file!")
+		return False
 
 
 def enforceProcessNameRule(procName):
-	# print("	Enforced process rule for process: " + procName)
-	foundBadProc = False
+	allProcsGood = True
 
 	for proc in psutil.process_iter():
 	    try:
@@ -33,11 +40,9 @@ def enforceProcessNameRule(procName):
 	    except psutil.NoSuchProcess:
 	        pass
 	    else:
-	        # print(pinfo)
-	        if pinfo.get("name") == "procName":
-			foundBadProc = True
-
-	print("Bad proccess running!")
+	        if pinfo.get("name") == procName:
+	       		allProcsGood = False
+	return allProcsGood
 
 
 def enforceMemoryStringRule(memString):
@@ -55,24 +60,36 @@ args = parser.parse_args()
 
 workingDirectory = args.gameDirectory
 
-
 with open('config.json') as f:
-    # for line in f:
+	
+	# Load in JSON file
     data = json.load(f)
 
+ruleCount = len(data.get("rules"))
+allRulesPass = True
+
+# Verify each rule
 for rule in data.get("rules"):
 	ruleType = rule.get("rule-type")
 
 	if ruleType == "file-hash":
 		print("Processing file hash rule...")
-		enforceFileRule(rule.get("file-name"), rule.get("hash"))
+		if enforceFileRule(rule.get("file-name"), rule.get("hash")) == False:
+			allRulesPass = False
 
 	elif ruleType == "running-process":
 		print("Processing running process rule...")
-		enforceProcessNameRule(rule.get("process-name"))
+		if enforceProcessNameRule(rule.get("process-name")) == False:
+			allRulesPass = False
 
 	elif ruleType == "memory-string":
 		print("Processing memory string rule...")
 		enforceMemoryStringRule(rule.get("string"))
 	else:
 		"Error: Unknown rule type"
+
+# Make a ruling
+if allRulesPass == True:
+	print("\n \033[1;32mVerdict: All good! \033[1;m\n")
+else: 
+	print("\n \033[1;31mVerdict: CHEATER\033[1;m\n")

@@ -7,7 +7,7 @@
     },
     {
     	"rule-type": "running-process",
-    	"process-name": "badcheat.exe"
+    	"process-name": "launchd"
     },
     {
     	"rule-type": "memory-string",
