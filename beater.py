@@ -16,6 +16,7 @@ import json
 import hashlib
 import psutil
 import argparse
+import os.path
 
 
 def enforceFileRule(fileName, fileHash):
@@ -44,10 +45,8 @@ def enforceProcessNameRule(procName):
 	       		allProcsGood = False
 	return allProcsGood
 
-
-def enforceMemoryStringRule(memString):
-	print("	Enforced memory rule for string: " + memString)
-
+def enforceBadFileRule(fileName):
+	return not os.path.isfile(workingDirectory + fileName) 
 
 # Instantiate the parser
 parser = argparse.ArgumentParser(description='Fight those cheaters!')
@@ -81,15 +80,15 @@ for rule in data.get("rules"):
 		print("Processing running process rule...")
 		if enforceProcessNameRule(rule.get("process-name")) == False:
 			allRulesPass = False
-
-	elif ruleType == "memory-string":
-		print("Processing memory string rule...")
-		enforceMemoryStringRule(rule.get("string"))
+	elif ruleType == "bad-file":
+		print("Processing bad file rule")
+		if enforceBadFileRule(rule.get("file-name")) == False:
+			allRulesPass = False
 	else:
 		"Error: Unknown rule type"
 
 # Make a ruling
 if allRulesPass == True:
-	print("\n \033[1;32mVerdict: All good! \033[1;m\n")
+	print("\n \033[1;32mReport: All good! \033[1;m\n")
 else: 
-	print("\n \033[1;31mVerdict: CHEATER\033[1;m\n")
+	print("\n \033[1;31mReport: CHEATER\033[1;m\n")

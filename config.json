@@ -7,11 +7,11 @@
     },
     {
     	"rule-type": "running-process",
-    	"process-name": "launchd"
+    	"process-name": "launchasdfasdf"
     },
     {
-    	"rule-type": "memory-string",
-    	"string": "l33thax"
+      "rule-type": "bad-file",
+      "file-name": "gamecheater.exe"
     }
   ]
 }
